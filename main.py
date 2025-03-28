@@ -41,9 +41,10 @@ def re_Process(img):
     img_gray = img.convert("L")
     img_np = np.array(img_gray)
 
-    # Segunda binarización, llegue a 210 como umbral a base de testeo, si se encuentra uno mejor que se use
-    img_bin = np.where(img_np > 180, 255, 0).astype(np.uint8)
-    
+    # Segunda binarización, llegue a 210 como umbral a base de testeo, si se encuentra uno mejor que se us
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    img_bin = cv2.dilate(img_bin, kernel, iterations=3)
+ 
     # Calcular bordes de caracteres
     contours, _ = cv2.findContours(img_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -53,11 +54,11 @@ def re_Process(img):
 
         #Solo cuenta caracteres mayores a 1x5px
         if w > 0 and h > 0:
-            char_img = img_bin[y:y+h, x:x+w]
+            char_img = img_np[y:y+h, x:x+w]
             w_images.append((x, char_img))
 
     # Ordena por coordenada
     w_images.sort(key=lambda x: x[0])
 
     # return provisional
-    return [binarizar_y_cuadrar(img).resize((56,56), Image.Resampling.LANCZOS) for _, img in w_images]
+    return [binarizar_y_cuadrar(img).resize((52,52), Image.Resampling.LANCZOS) for _, img in w_images]

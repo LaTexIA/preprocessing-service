@@ -37,10 +37,12 @@ def binarizar_y_cuadrar(img, umbral=160, color=255):
     return Image.fromarray(img_cuadrada)  # Convertir de vuelta a imagen PIL
 
 def adelgazar_trazos(img_np, kernel_size=(2,2), iterations=1):
-    
+
     kernel_erode = cv2.getStructuringElement(cv2.MORPH_RECT, kernel_size)
     img_eroded = cv2.dilate(img_np, kernel_erode, iterations=iterations)
-    return img_eroded
+
+    img_bin = np.where(img_eroded > 250, 255, 0).astype(np.uint8)
+    return img_bin
 
 def re_Process(img):
     img = Image.open(img)
@@ -67,4 +69,4 @@ def re_Process(img):
     w_images.sort(key=lambda x: x[0])
 
     # return provisional
-    return [binarizar_y_cuadrar(img).resize((52,52), Image.Resampling.LANCZOS) for _, img in w_images]
+    return [binarizar_y_cuadrar(img) for _, img in w_images]

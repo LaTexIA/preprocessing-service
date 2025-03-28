@@ -36,6 +36,12 @@ def binarizar_y_cuadrar(img, umbral=160, color=255):
 
     return Image.fromarray(img_cuadrada)  # Convertir de vuelta a imagen PIL
 
+def adelgazar_trazos(img_np, kernel_size=(2,2), iterations=1):
+    
+    kernel_erode = cv2.getStructuringElement(cv2.MORPH_RECT, kernel_size)
+    img_eroded = cv2.dilate(img_np, kernel_erode, iterations=iterations)
+    return img_eroded
+
 def re_Process(img):
     img = Image.open(img)
     img_gray = img.convert("L")
@@ -55,7 +61,7 @@ def re_Process(img):
         #Solo cuenta caracteres mayores a 1x5px
         if w > 0 and h > 0:
             char_img = img_np[y:y+h, x:x+w]
-            w_images.append((x, char_img))
+            w_images.append((x, adelgazar_trazos(char_img)))
 
     # Ordena por coordenada
     w_images.sort(key=lambda x: x[0])

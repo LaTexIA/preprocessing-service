@@ -14,7 +14,7 @@ async def preprocess_image(file: UploadFile = File(...)):
     img_gray = img.convert("L")
     img_np = np.array(img_gray)
 
-    # Aplicar umbral para binarizar la imagen
+    '''# Aplicar umbral para binarizar la imagen
     # Nota, para ciertas imagenes se necesita un umbral mas bajo, valdria la pena hacerlo dinamico
     img_bin = np.where(img_np > 128, 255, 0).astype(np.uint8)
 
@@ -44,9 +44,10 @@ async def preprocess_image(file: UploadFile = File(...)):
     # Esto estoy dudando si dejarlo.
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
     img_dilatada = cv2.dilate(p_blurr, kernel, iterations=1)
+    '''
 
     # Segunda binarización, llegue a 210 como umbral a base de testeo, si se encuentra uno mejor que se use
-    img_bin = np.where(img_dilatada > 210, 255, 0).astype(np.uint8)
+    img_bin = np.where(img_np > 210, 255, 0).astype(np.uint8)
     
 
     # Calcular bordes de caracteres
@@ -65,7 +66,6 @@ async def preprocess_image(file: UploadFile = File(...)):
     w_images.sort(key=lambda x: x[0])
 
     # invierte colores
-    map(lambda x: cv2.bitwise_not(x), w_images)
 
     # return provisional
     return
